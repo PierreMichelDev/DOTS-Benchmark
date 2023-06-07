@@ -11,10 +11,16 @@ using UnityEngine;
 public partial struct ZombieSimulationUpdateZombieState : ISystem
 {
 	[BurstCompile]
+	public void OnCreate(ref SystemState state)
+	{
+		state.RequireForUpdate<ZombieSimulationSettings>();
+	}
+
+	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
 		float fovDistanceSq = settings.FOVDistance * settings.FOVDistance;
 		float fovAngleCos = math.cos(math.radians(settings.FOVAngle));

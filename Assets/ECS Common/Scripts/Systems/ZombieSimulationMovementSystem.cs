@@ -8,10 +8,16 @@ using UnityEngine;
 public partial struct ZombieSimulationMovementSystem : ISystem
 {
 	[BurstCompile]
+	public void OnCreate(ref SystemState state)
+	{
+		state.RequireForUpdate<ZombieSimulationSettings>();
+	}
+
+	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float deltaTime = SystemAPI.Time.DeltaTime;
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
 		foreach (var (movement, localTransform) in SystemAPI.Query<RefRW<ZombieSimulationMovement>, RefRW<LocalTransform>>())
 		{

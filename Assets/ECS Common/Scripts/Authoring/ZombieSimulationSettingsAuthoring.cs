@@ -60,10 +60,13 @@ public class ZombieSimulationSettingsAuthoring : MonoBehaviour
 		public override void Bake(ZombieSimulationSettingsAuthoring authoring)
 		{
 			var entity = GetEntity(TransformUsageFlags.None);
-			AddComponent(entity, new ZombieSimulationSettingsECSEnum
+			float3 minBounds = new float3(authoring.m_SimulationBounds.min.x, 0.0f, authoring.m_SimulationBounds.min.z);
+			float3 maxBounds = new float3(authoring.m_SimulationBounds.max.x, 0.0f, authoring.m_SimulationBounds.max.z);
+
+			AddComponent(entity, new ZombieSimulationSettings
 			{
-				MinBounds = new float3(authoring.m_SimulationBounds.min.x, 0.0f, authoring.m_SimulationBounds.min.z),
-				MaxBounds = new float3(authoring.m_SimulationBounds.max.x, 0.0f, authoring.m_SimulationBounds.max.z),
+				MinBounds = minBounds,
+				MaxBounds = maxBounds,
 				AgentCount = authoring.m_AgentCount,
 				InfectedRatio = authoring.m_InfectedRatio,
 				AgentPrefab = GetEntity(authoring.m_AgentPrefab, TransformUsageFlags.Dynamic),

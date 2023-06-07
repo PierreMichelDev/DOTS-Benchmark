@@ -14,13 +14,14 @@ public partial struct ZombieSimulationUpdateCalmState : ISystem
 	public void OnCreate(ref SystemState state)
 	{
 		m_Random = new Random(1234);
+		state.RequireForUpdate<ZombieSimulationSettings>();
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
 		foreach (var (calmState, movement)
 				in SystemAPI.Query<RefRW<ZombieSimulationCalmState>, RefRW<ZombieSimulationMovement>>())

@@ -11,10 +11,17 @@ using Random = Unity.Mathematics.Random;
 public partial struct ZombieSimulationInitSystem : ISystem
 {
 	[BurstCompile]
+	public void OnCreate(ref SystemState state)
+	{
+		state.RequireForUpdate<ZombieSimulationSettings>();
+	}
+
+	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		Random randomGenerator = new Random(1234);
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
+		state.EntityManager.CreateSingleton(new ZombieSimulationSpatialHashData(settings.MinBounds, settings.MaxBounds, new int2(100, 100)));
 
 		int infectedCount = math.max((int)math.round(settings.AgentCount * settings.InfectedRatio), 1);
 		var ecb = new EntityCommandBuffer(Allocator.Temp);

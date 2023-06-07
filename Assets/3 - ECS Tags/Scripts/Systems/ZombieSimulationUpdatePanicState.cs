@@ -8,6 +8,12 @@ using UnityEngine;
 public partial struct ZombieSimulationUpdatePanicState : ISystem
 {
 	[BurstCompile]
+	public void OnCreate(ref SystemState state)
+	{
+		state.RequireForUpdate<ZombieSimulationSettings>();
+	}
+
+	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;

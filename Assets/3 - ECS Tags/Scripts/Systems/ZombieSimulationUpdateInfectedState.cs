@@ -9,10 +9,16 @@ using UnityEngine;
 public partial struct ZombieSimulationUpdateInfectedState : ISystem
 {
 	[BurstCompile]
+	public void OnCreate(ref SystemState state)
+	{
+		state.RequireForUpdate<ZombieSimulationSettings>();
+	}
+
+	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
 		var ecb = new EntityCommandBuffer(Allocator.Temp);
 		foreach (var (infectedState, color, entity)

@@ -16,13 +16,14 @@ public partial struct ZombieSimulationUpdateStateSystem : ISystem
 	public void OnCreate(ref SystemState state)
 	{
 		m_Random = new Random(1234);
+		state.RequireForUpdate<ZombieSimulationSettings>();
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
-		var settings = SystemAPI.GetSingleton<ZombieSimulationSettingsECSEnum>();
+		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
 		foreach (var (agentState, movement, fovResults, color, localTransform) in
 				SystemAPI.Query<RefRW<ZombieSimulationAgentState>, RefRW<ZombieSimulationMovement>, ZombieSimulationAgentFOVResults, RefRW<URPMaterialPropertyBaseColor>, LocalTransform>())

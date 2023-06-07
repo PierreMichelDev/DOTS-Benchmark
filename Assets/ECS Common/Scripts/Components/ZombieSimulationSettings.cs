@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct ZombieSimulationSettingsECSEnum : IComponentData
+public struct ZombieSimulationSettings : IComponentData
 {
 	public float3 MinBounds;
 	public float3 MaxBounds;
