@@ -15,6 +15,7 @@ public partial struct ZombieSimulationUpdateCalmState : ISystem
 	{
 		m_Random = new Random(1234);
 		state.RequireForUpdate<ZombieSimulationSettings>();
+		state.RequireForUpdate<ZombieSimulationECSTags>();
 	}
 
 	[BurstCompile]

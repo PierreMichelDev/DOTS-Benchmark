@@ -12,6 +12,7 @@ public partial struct ZombieSimulationUpdateSpatialMapSystemECSEnum : ISystem
 	{
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationSpatialHashData>();
+		state.RequireForUpdate<ZombieSimulationECSEnum>();
 	}
 
 	[BurstCompile]

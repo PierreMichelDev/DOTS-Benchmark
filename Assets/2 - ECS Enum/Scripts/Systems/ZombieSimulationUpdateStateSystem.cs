@@ -17,6 +17,7 @@ public partial struct ZombieSimulationUpdateStateSystem : ISystem
 	{
 		m_Random = new Random(1234);
 		state.RequireForUpdate<ZombieSimulationSettings>();
+		state.RequireForUpdate<ZombieSimulationECSEnum>();
 	}
 
 	[BurstCompile]

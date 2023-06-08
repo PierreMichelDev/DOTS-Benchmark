@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1194227666}
   - component: {fileID: 1194227667}
+  - component: {fileID: 1194227668}
   m_Layer: 0
   m_Name: SimulationSettings
   m_TagString: Untagged
@@ -190,3 +191,15 @@ MonoBehaviour:
   m_HealthyColor: {r: 0, g: 0, b: 1, a: 1}
   m_InfectedColor: {r: 0, g: 1, b: 0, a: 1}
   m_ZombieColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &1194227668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194227664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05e6acc7d0209084f860972cba7a238f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

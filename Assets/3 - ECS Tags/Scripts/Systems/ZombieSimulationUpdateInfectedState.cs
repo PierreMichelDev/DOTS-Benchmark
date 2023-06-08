@@ -12,6 +12,7 @@ public partial struct ZombieSimulationUpdateInfectedState : ISystem
 	public void OnCreate(ref SystemState state)
 	{
 		state.RequireForUpdate<ZombieSimulationSettings>();
+		state.RequireForUpdate<ZombieSimulationECSTags>();
 	}
 
 	[BurstCompile]
