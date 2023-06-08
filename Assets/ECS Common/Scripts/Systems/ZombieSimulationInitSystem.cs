@@ -21,7 +21,10 @@ public partial struct ZombieSimulationInitSystem : ISystem
 	{
 		Random randomGenerator = new Random(1234);
 		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
-		state.EntityManager.CreateSingleton(new ZombieSimulationSpatialHashData(settings.MinBounds, settings.MaxBounds, new int2(100, 100)));
+
+		float3 boundsSize = settings.MaxBounds - settings.MinBounds;
+		int2 spatialGridSize = new int2((int)(boundsSize.x / settings.FOVDistance), (int)(boundsSize.z / settings.FOVDistance));
+		state.EntityManager.CreateSingleton(new ZombieSimulationSpatialHashData(settings.MinBounds, settings.MaxBounds, spatialGridSize));
 
 		int infectedCount = math.max((int)math.round(settings.AgentCount * settings.InfectedRatio), 1);
 		var ecb = new EntityCommandBuffer(Allocator.Temp);
