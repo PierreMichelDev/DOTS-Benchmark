@@ -17,6 +17,8 @@ public class ZombieSimulationAgentAuthoringECSTags : MonoBehaviour
 			{
 				AddComponent(entity, new ZombieSimulationInfectedState{ IncubationEndTime = authoring.m_TimeUntilZombie });
 			}
+
+			AddComponent(entity, new ZombieSimulationAgentFOVResults());
 		}
 	}
 }
