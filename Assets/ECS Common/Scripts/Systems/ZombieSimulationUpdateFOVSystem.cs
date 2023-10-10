@@ -1,24 +1,29 @@
-using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Profiling;
 using Unity.Transforms;
-using UnityEngine;
 
 [BurstCompile]
 public partial struct ZombieSimulationUpdateFOVSystem : ISystem
 {
+	private ProfilerMarker m_Marker;
+
 	[BurstCompile]
 	public void OnCreate(ref SystemState state)
 	{
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationSpatialHashData>();
+
+		m_Marker = new ProfilerMarker("ZombieSimulationUpdateFOVSystem.Update");
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
+		m_Marker.Begin();
+
 		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 		float fovAngleCos = math.cos(math.radians(settings.FOVAngle));
 
@@ -59,5 +64,6 @@ public partial struct ZombieSimulationUpdateFOVSystem : ISystem
 				}
 			}
 		}
+		m_Marker.End();
 	}
 }
