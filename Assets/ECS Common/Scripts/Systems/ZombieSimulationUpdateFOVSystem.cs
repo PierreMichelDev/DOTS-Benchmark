@@ -16,7 +16,7 @@ public partial struct ZombieSimulationUpdateFOVSystem : ISystem
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationSpatialHashData>();
 
-		m_Marker = new ProfilerMarker("ZombieSimulationUpdateFOVSystem.Update");
+		m_Marker = new ProfilerMarker("UpdateFOVSystem");
 	}
 
 	[BurstCompile]

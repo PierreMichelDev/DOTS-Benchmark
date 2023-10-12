@@ -2,6 +2,7 @@ using System;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Profiling;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
@@ -10,6 +11,7 @@ using Random = Unity.Mathematics.Random;
 [BurstCompile]
 public partial struct ZombieSimulationUpdateStateSystem : ISystem
 {
+	private ProfilerMarker m_Marker;
 	private Random m_Random;
 
 	[BurstCompile]
@@ -18,11 +20,15 @@ public partial struct ZombieSimulationUpdateStateSystem : ISystem
 		m_Random = new Random(1234);
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationECSEnum>();
+
+		m_Marker = new ProfilerMarker("UpdateEnumState");
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
+		m_Marker.Begin();
+
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
 		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
@@ -101,5 +107,7 @@ public partial struct ZombieSimulationUpdateStateSystem : ISystem
 				color.ValueRW.Value = settings.ZombieColor;
 			}
 		}
+
+		m_Marker.End();
 	}
 }

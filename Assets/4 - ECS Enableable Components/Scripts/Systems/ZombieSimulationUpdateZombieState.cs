@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Profiling;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
@@ -10,16 +11,22 @@ using UnityEngine;
 [BurstCompile]
 public partial struct ZombieSimulationUpdateZombieStateEnableable : ISystem
 {
+	private ProfilerMarker m_Marker;
+
 	[BurstCompile]
 	public void OnCreate(ref SystemState state)
 	{
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationECSEnableable>();
+
+		m_Marker = new ProfilerMarker("UpdateZombieState");
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
+		m_Marker.Begin();
+
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
 		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
@@ -52,5 +59,7 @@ public partial struct ZombieSimulationUpdateZombieStateEnableable : ISystem
 				SystemAPI.SetComponentEnabled<ZombieSimulationCalmStateEnableable>(entity, true);
 			}
 		}
+
+		m_Marker.End();
 	}
 }

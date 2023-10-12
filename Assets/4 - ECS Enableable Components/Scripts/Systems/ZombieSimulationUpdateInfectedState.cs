@@ -2,22 +2,29 @@ using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Profiling;
 using Unity.Rendering;
 using UnityEngine;
 
 [BurstCompile]
 public partial struct ZombieSimulationUpdateInfectedStateEnableable : ISystem
 {
+	private ProfilerMarker m_Marker;
+
 	[BurstCompile]
 	public void OnCreate(ref SystemState state)
 	{
 		state.RequireForUpdate<ZombieSimulationSettings>();
 		state.RequireForUpdate<ZombieSimulationECSEnableable>();
+
+		m_Marker = new ProfilerMarker("UpdateInfectedState");
 	}
 
 	[BurstCompile]
 	public void OnUpdate(ref SystemState state)
 	{
+		m_Marker.Begin();
+
 		float currentTime = (float)SystemAPI.Time.ElapsedTime;
 		var settings = SystemAPI.GetSingleton<ZombieSimulationSettings>();
 
@@ -35,5 +42,7 @@ public partial struct ZombieSimulationUpdateInfectedStateEnableable : ISystem
 				//TODO: force calm state ?
 			}
 		}
+
+		m_Marker.End();
 	}
 }
