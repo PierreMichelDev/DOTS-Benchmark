@@ -73,7 +73,18 @@ public class PerformanceRecorder : MonoBehaviour
 
     private void DumpRecordedData()
     {
-        using StreamWriter sw = new StreamWriter(File.OpenWrite("/Users/pierremichel/Documents/profile_results.csv"));
+        string path = Application.dataPath;
+        if (Application.platform == RuntimePlatform.OSXPlayer)
+        {
+            path += "/../../";
+        }
+        else if (Application.platform == RuntimePlatform.WindowsPlayer)
+        {
+            path += "/../";
+        }
+        path += "profile_results.csv";
+
+        using StreamWriter sw = new StreamWriter(File.OpenWrite(path));
 
         sw.Write("Time;");
         for (int i = 0; i < m_RecordingEntries.Length; ++i)
