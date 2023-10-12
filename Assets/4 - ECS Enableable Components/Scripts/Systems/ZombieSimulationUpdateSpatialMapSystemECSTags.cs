@@ -38,6 +38,7 @@ public partial struct ZombieSimulationUpdateSpatialMapSystemECSEnableable : ISys
 			bool isInfected = SystemAPI.IsComponentEnabled<ZombieSimulationInfectedStateEnableable>(entity);
 			spatialHash.ValueRW.AddEntity(entity, transform.Position, isInfected ? SpatialHashEntityType.Infected : SpatialHashEntityType.Human);
 		}
+		spatialHash.ValueRW.SortEntities();
 
 		m_Marker.End();
 	}

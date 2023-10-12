@@ -155,8 +155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SimulationBounds:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 80, y: 80, z: 80}
-  m_AgentCount: 10000
+    m_Extent: {x: 160, y: 160, z: 160}
+  m_AgentCount: 20000
   m_InfectedRatio: 0
   m_AgentPrefab: {fileID: 2303300169718560939, guid: fc37d81dfe0ffba48b8ca74e0f4bf9d7,
     type: 3}

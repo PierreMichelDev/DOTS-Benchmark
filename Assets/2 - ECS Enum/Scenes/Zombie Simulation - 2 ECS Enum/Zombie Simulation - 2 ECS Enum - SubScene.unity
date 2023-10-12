@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -170,8 +170,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SimulationBounds:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 80, y: 80, z: 80}
-  m_AgentCount: 10000
+    m_Extent: {x: 160, y: 160, z: 160}
+  m_AgentCount: 20000
   m_InfectedRatio: 0
   m_AgentPrefab: {fileID: 2303300169718560939, guid: dbaeccf1de336354ab586ab6978e017e,
     type: 3}

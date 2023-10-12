@@ -39,6 +39,7 @@ public partial struct ZombieSimulationUpdateSpatialMapSystemECSEnum : ISystem
 			};
 			spatialHash.ValueRW.AddEntity(entity, transform.Position, type);
 		}
+		spatialHash.ValueRW.SortEntities();
 
 		m_Marker.End();
 	}

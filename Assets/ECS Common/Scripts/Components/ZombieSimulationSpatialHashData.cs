@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -17,92 +18,23 @@ public struct SpatialHashEntityData
 	public SpatialHashEntityType Type;
 }
 
-public struct SpatialHashCell
-{
-	public NativeList<SpatialHashEntityData> Entities;
-}
-
 [BurstCompile]
-public struct ZombieSimulationSpatialHashData : IComponentData
+public struct SpatialHashComparer : IComparer<SpatialHashEntityData>
 {
-	//TODO: rename since it doesn't really use a hash
+	public float3 MinBounds;
+	public float3 MaxBounds;
+	public int2 GridSize;
 
-	public ZombieSimulationSpatialHashData(float3 minBounds, float3 maxBounds, int2 gridSize)
+	[BurstCompile]
+	public int Compare(SpatialHashEntityData lhs, SpatialHashEntityData rhs)
 	{
-		MinBounds = minBounds;
-		MaxBounds = maxBounds;
-		GridSize = gridSize;
-
-		int cellCount = gridSize.x * gridSize.y;
-		Cells = new NativeArray<SpatialHashCell>(cellCount, Allocator.Persistent);
-		for (int i = 0; i < cellCount; ++i)
-		{
-			Cells[i] = new SpatialHashCell()
-			{
-				Entities = new NativeList<SpatialHashEntityData>(Allocator.Persistent)
-			};
-		}
+		int lhsIndex = ComputeCellFlatIndex(ComputeCellIndex(lhs.Position));
+		int rhsIndex = ComputeCellFlatIndex(ComputeCellIndex(rhs.Position));
+		return lhsIndex - rhsIndex;
 	}
 
 	[BurstCompile]
-	public void Reset()
-	{
-		int maxIndex = Cells.Length;
-		for (int i = 0; i < maxIndex; ++i)
-		{
-			Cells[i].Entities.Clear();
-		}
-	}
-
-	[BurstCompile]
-	public void AddEntity(Entity entity, float3 position, SpatialHashEntityType type)
-	{
-		int2 cellIndex = ComputeCellIndex(position);
-		int cellFlatIndex = ComputeCellFlatIndex(cellIndex);
-		Cells[cellFlatIndex].Entities.Add(new SpatialHashEntityData()
-		{
-			Entity = entity,
-			Position = position,
-			Type = type
-		});
-	}
-
-	[BurstCompile]
-	public readonly void LookupEntities(float3 position, float radius, ref NativeList<SpatialHashEntityData> entities)
-	{
-		int2 minCellIndex = ComputeCellIndex(position - radius);
-		int2 maxCellIndex = ComputeCellIndex(position + radius);
-
-		float radiusSq = radius * radius;
-		for (int y = minCellIndex.y; y <= maxCellIndex.y; ++y)
-		{
-			for (int x = minCellIndex.x; x <= maxCellIndex.x; ++x)
-			{
-				int2 cellIndex = new int2(x, y);
-				int cellFlatIndex = ComputeCellFlatIndex(cellIndex);
-				LookupCellEntities(position, radiusSq, Cells[cellFlatIndex].Entities, ref entities);
-			}
-		}
-	}
-
-	[BurstCompile]
-	private readonly void LookupCellEntities(float3 position, float radiusSq, in NativeList<SpatialHashEntityData> cellEntities,
-		ref NativeList<SpatialHashEntityData> entities)
-	{
-		int maxIndex = cellEntities.Length;
-		for (int i = 0; i < maxIndex; ++i)
-		{
-			SpatialHashEntityData entityData = cellEntities[i];
-			float distance = math.distancesq(position, entityData.Position);
-			if (distance <= radiusSq)
-			{
-				entities.Add(entityData);
-			}
-		}
-	}
-
-	[BurstCompile]
-	private readonly int2 ComputeCellIndex(float3 position)
+	public readonly int2 ComputeCellIndex(float3 position)
 	{
 		float3 normalizedPosition = (position - MinBounds) / (MaxBounds - MinBounds);
 		int2 cellIndex = new int2((int)(normalizedPosition.x * GridSize.x), (int)(normalizedPosition.z * GridSize.y));
@@ -111,13 +43,71 @@ public struct ZombieSimulationSpatialHashData : IComponentData
 	}
 
 	[BurstCompile]
-	private readonly int ComputeCellFlatIndex(int2 cellIndex)
+	public readonly int ComputeCellFlatIndex(int2 cellIndex)
 	{
 		return cellIndex.y * GridSize.x + cellIndex.x;
 	}
+}
 
-	private float3 MinBounds;
-	private float3 MaxBounds;
-	private int2 GridSize;
-	private NativeArray<SpatialHashCell> Cells;
+[BurstCompile]
+public struct ZombieSimulationSpatialHashData : IComponentData
+{
+	public ZombieSimulationSpatialHashData(float3 minBounds, float3 maxBounds, int2 gridSize)
+	{
+		int cellCount = gridSize.x * gridSize.y;
+		MaxCellIndex = cellCount - 1;
+		CellStartIndices = new NativeArray<int>(cellCount, Allocator.Persistent);
+		Entities = new NativeList<SpatialHashEntityData>(Allocator.Persistent);
+		Comparer = new SpatialHashComparer()
+		{
+			MinBounds = minBounds,
+			MaxBounds = maxBounds,
+			GridSize = gridSize
+		};
+	}
+
+	[BurstCompile]
+	public void Reset()
+	{
+		Entities.Clear();
+	}
+
+	[BurstCompile]
+	public void AddEntity(Entity entity, float3 position, SpatialHashEntityType type)
+	{
+		Entities.Add(new SpatialHashEntityData()
+		{
+			Entity = entity,
+			Position = position,
+			Type = type
+		});
+	}
+
+	public void SortEntities()
+	{
+		int currentCellIndex = -1;
+		int bufferLength = Entities.Length;
+		Entities.Sort(Comparer);
+		for (int i = 0; i < bufferLength; ++i)
+		{
+			int newCellIndex = Comparer.ComputeCellFlatIndex(Comparer.ComputeCellIndex(Entities[i].Position));
+
+			if (currentCellIndex != newCellIndex)
+			{
+				CellStartIndices[newCellIndex] = i;
+			}
+
+			currentCellIndex = newCellIndex;
+		}
+	}
+
+	[BurstCompile]
+	public readonly void LookupEntities(float3 position, float radius, ref NativeList<SpatialHashEntityData> entities)
+	{
+	}
+
+	public NativeList<SpatialHashEntityData> Entities;
+	public NativeArray<int> CellStartIndices;
+	public SpatialHashComparer Comparer;
+	public int MaxCellIndex;
 }
